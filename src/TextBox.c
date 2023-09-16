@@ -148,7 +148,7 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 			}
 		}
 
-		char c = getCharFromKey(key);
+		char c = GetCharFromKey(key);
 		if (c) TextBoxAddChars(box, &c, 1);
 	}
 
