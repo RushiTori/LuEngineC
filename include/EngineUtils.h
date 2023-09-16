@@ -32,6 +32,12 @@
 #define GetCustomFrameCount(timer, frameTime) ((int)((timer) / (frameTime)))
 #define DoEveryNFrame(n) ((((int)(GetTime() / GetFrameTime())) % (n)) == 0)
 
+extern string ProjectTitle;
+extern uint width;
+extern uint height;
+extern ulong frameCount;
+extern Camera2D globalCamera;
+
 extern float KeyboardKeyPressTimers[];
 extern float KeyboardKeyHoldTimers[];
 extern float KeyboardKeyUpTimers[];
@@ -48,8 +54,12 @@ extern float GamepadButtonPressTimers[][MAX_GAMEPADS];
 extern float GamepadButtonHoldTimers[][MAX_GAMEPADS];
 extern float GamepadButtonUpTimers[][MAX_GAMEPADS];
 
+void UpdateLuEngine();
+
 void UpdateInputsTimers();
 
-char getCharFromKey(int key);
+void UpdateCameraLu(Camera2D* cam);
+
+char GetCharFromKey(int key);
 
 #endif	// ENGINE_UTILS_H

@@ -1,5 +1,12 @@
 #include "EngineUtils.h"
 
+string ProjectTitle = "Empty Project";
+uint width = 800;
+uint height = 480;
+ulong frameCount = 0;
+Camera2D globalCamera =
+	(Camera2D){.offset = (Vector2){.x = 0, .y = 0}, .rotation = 0, .target = (Vector2){.x = 0, .y = 0}, .zoom = 1};
+
 float KeyboardKeyPressTimers[] = {
 	[KEY_NULL] = 0,
 	[KEY_APOSTROPHE] = 0,
@@ -404,6 +411,12 @@ static const uint AndroidKeyCount = sizeof(AndroidKeyPressTimers) / sizeof(*Andr
 static const uint MouseButtonCount = sizeof(MouseButtonPressTimers) / sizeof(*MouseButtonPressTimers);
 static const uint GamepadButtonCount = sizeof(GamepadButtonPressTimers) / sizeof(*GamepadButtonPressTimers);
 
+void UpdateLuEngine() {
+	frameCount++;
+	UpdateInputsTimers();
+	UpdateCameraLu(&globalCamera);
+}
+
 void UpdateInputsTimers() {
 	float currTime = GetTime();
 	float deltaTime = GetFrameTime();
@@ -499,6 +512,23 @@ void UpdateInputsTimers() {
 	}
 }
 
+void UpdateCameraLu(Camera2D* cam) {
+	if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+		Vector2 camMove = GetMouseDelta();
+		camMove = Vector2Scale(camMove, -1 / cam->zoom);
+		cam->target = Vector2Add(cam->target, camMove);
+	}
+
+	float zoomAmount = GetMouseWheelMove() * 0.15f;
+
+	if (zoomAmount != 0) {
+		Vector2 mouseBefore = GetScreenToWorld2D(GetMousePosition(), *cam);
+		cam->zoom *= 1 + zoomAmount;
+		Vector2 mouseAfter = GetScreenToWorld2D(GetMousePosition(), *cam);
+		Vector2 mouseDiff = Vector2Subtract(mouseBefore, mouseAfter);
+		cam->target = Vector2Add(cam->target, mouseDiff);
+	}
+}
 
 char getCharFromKey(int key) {
 	if (key >= KEY_KP_0 && key <= KEY_KP_9) return '0' + (key - KEY_KP_0);
