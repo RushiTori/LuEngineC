@@ -192,10 +192,11 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 
 float TextWidth(char* text, uint n, float textSize) {
 	if (!text) return 0;
+
 	n = min(n, strlen(text));
+	if (n == strlen(text)) return MeasureTextEx(GetFontDefault(), text, textSize, (int)(textSize / 10)).x;
 
 	char temp = text[n];
-
 	text[n] = '\0';
 	float result = MeasureTextEx(GetFontDefault(), text, textSize, (int)(textSize / 10)).x;
 	text[n] = temp;
