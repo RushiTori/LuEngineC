@@ -529,7 +529,7 @@ void UpdateCameraLu(Camera2D* cam) {
 	}
 }
 
-char getCharFromKey(int key) {
+char GetCharFromKey(int key) {
 	if (key >= KEY_KP_0 && key <= KEY_KP_9) return '0' + (key - KEY_KP_0);
 	if (key >= KEY_A && key <= KEY_Z) return (key - KEY_A) + ((IsShiftDown) ? 'A' : 'a');
 	if (key >= KEY_ZERO && key <= KEY_NINE) return ((IsShiftDown) ? "!@#$%^&*()" : "0123456789")[key - KEY_ZERO];
