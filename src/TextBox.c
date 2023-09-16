@@ -106,7 +106,6 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 	if (!box->isFocused) return;
 
 	for (int key = GetKeyPressed(); key; key = GetKeyPressed()) {
-		printf("key : %d\n", key);
 		box->writingCursor = clamp(box->writingCursor, 0, box->content.elementCount - 1);
 		if ((key == KEY_HOME) || (key == KEY_PAGE_UP)) {
 			if (IsShiftDown) {
