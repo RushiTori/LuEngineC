@@ -14,7 +14,7 @@ typedef enum TextAlign {
 } __attribute__((__packed__)) TextAlign;
 
 typedef struct DrawableText {
-	string text;
+	const string text;
 	float textSize;
 	Color textCol;
 	TextAlign textAlignX, textAlignY;

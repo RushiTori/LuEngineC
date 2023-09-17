@@ -32,7 +32,6 @@
 #define GetCustomFrameCount(timer, frameTime) ((int)((timer) / (frameTime)))
 #define DoEveryNFrame(n) ((((int)(GetTime() / GetFrameTime())) % (n)) == 0)
 
-extern string ProjectTitle;
 extern uint width;
 extern uint height;
 extern ulong frameCount;

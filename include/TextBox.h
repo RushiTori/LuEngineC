@@ -20,8 +20,8 @@
 #define TEXTBOX_ALL_SYMBOLS TEXTBOX_MATHEXPR_SYMBOLS TEXTBOX_TEXT_SYMBOLS TEXTBOX_MISC_SYMBOLS
 
 typedef struct TextBox {
-	string alphabet;
-	Array content;
+	const string alphabet;
+	Arraybyte content;
 	uint maxCharCount;
 	int selectCursor;
 	int writingCursor;
@@ -33,7 +33,7 @@ typedef struct TextBox {
 
 #define EmptyTextBox                                                                                                   \
 	(TextBox) {                                                                                                        \
-		.alphabet = TEXTBOX_ASCII_PRINTABLES, .content = arr_Create(sizeof(char), 0, false, false), .maxCharCount = 0, \
+		.alphabet = TEXTBOX_ASCII_PRINTABLES, .content = EmptyArray(byte), .maxCharCount = 0, \
 		.selectCursor = -1, .writingCursor = 0, .body = (Rectangle){.x = 0, .y = 0, .width = 275, .height = 30},       \
 		.isActive = true, .isFocused = false                                                                           \
 	}

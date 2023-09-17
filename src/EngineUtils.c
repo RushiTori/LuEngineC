@@ -1,6 +1,5 @@
 #include "EngineUtils.h"
 
-string   ProjectTitle = "Empty Project";
 uint     width        = 800;
 uint     height       = 480;
 ulong    frameCount   = 0;

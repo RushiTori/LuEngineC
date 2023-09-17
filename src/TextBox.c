@@ -4,8 +4,8 @@ TextBox TextBoxCreate(float x, float y, float w, float h, uint maxCharCount, con
 	TextBox temp = EmptyTextBox;
 
 	temp.alphabet = alphabet;
-	arr_Reserve(&temp.content, maxCharCount);
-	arr_Push(&temp.content, "\0", 1);
+	temp.content = ArraybyteCreate(maxCharCount);
+	ArraybytePush(&temp.content, '\0');
 	temp.maxCharCount = maxCharCount;
 	temp.body = (Rectangle){.x = x, .y = y, .width = w, .height = h};
 
@@ -16,8 +16,8 @@ TextBox TextBoxCreateV(Vector2 pos, float w, float h, uint maxCharCount, const s
 	TextBox temp = EmptyTextBox;
 
 	temp.alphabet = alphabet;
-	arr_Reserve(&temp.content, maxCharCount);
-	arr_Push(&temp.content, "\0", 1);
+	temp.content = ArraybyteCreate(maxCharCount);
+	ArraybytePush(&temp.content, '\0');
 	temp.maxCharCount = maxCharCount;
 	temp.body = (Rectangle){.x = pos.x, .y = pos.y, .width = w, .height = h};
 
@@ -28,8 +28,8 @@ TextBox TextBoxCreateRec(Rectangle rec, uint maxCharCount, const string alphabet
 	TextBox temp = EmptyTextBox;
 
 	temp.alphabet = alphabet;
-	arr_Reserve(&temp.content, maxCharCount);
-	arr_Push(&temp.content, "\0", 1);
+	temp.content = ArraybyteCreate(maxCharCount);
+	ArraybytePush(&temp.content, '\0');
 	temp.maxCharCount = maxCharCount;
 	temp.body = rec;
 
@@ -43,7 +43,7 @@ string TextBoxGetSelection(TextBox* box) {
 	uint selectIdx = min(box->writingCursor, box->selectCursor);
 	uint selectLen = max(box->writingCursor, box->selectCursor) - selectIdx;
 	string selection = calloc(selectLen + 1, sizeof(char));
-	memcpy(selection, arr_Get(&box->content, selectIdx), selectLen);
+	memcpy(selection, box->content.data + selectIdx, selectLen);
 
 	return selection;
 }
@@ -60,7 +60,7 @@ void TextBoxMouseInteract(TextBox* box, Vector2 mousePos) {
 }
 
 void TextBoxEraseChars(TextBox* box, uint eraseIdx, uint eraseCount) {
-	arr_Remove(&box->content, eraseIdx, eraseCount, false);
+	ArraybyteEraseAll(&box->content, eraseIdx, eraseCount);
 	box->selectCursor = -1;
 	box->writingCursor = eraseIdx;
 }
@@ -77,8 +77,8 @@ void TextBoxAddChars(TextBox* box, const char* str, uint charCount) {
 	TextBoxEraseSelection(box);
 	for (uint i = 0; i < charCount; i++) {
 		if (!str_Contains(box->alphabet, str[i])) continue;
-		if (box->content.elementCount > box->maxCharCount) break;
-		arr_Insert(&box->content, box->writingCursor++, str + i, 1);
+		if (box->content.size > box->maxCharCount) break;
+		ArraybyteInsert(&box->content, box->writingCursor++, str[i]);
 	}
 }
 
@@ -106,7 +106,7 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 	if (!box->isFocused) return;
 
 	for (int key = GetKeyPressed(); key; key = GetKeyPressed()) {
-		box->writingCursor = clamp(box->writingCursor, 0, box->content.elementCount - 1);
+		box->writingCursor = clamp(box->writingCursor, 0, box->content.size - 1);
 		if ((key == KEY_HOME) || (key == KEY_PAGE_UP)) {
 			if (IsShiftDown) {
 				if (box->selectCursor < 0) box->selectCursor = box->writingCursor;
@@ -120,7 +120,7 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 			} else {
 				box->selectCursor = -1;
 			}
-			box->writingCursor = box->content.elementCount - 1;
+			box->writingCursor = box->content.size - 1;
 		} else if (key == KEY_C) {
 			if (IsCtrlDown) {
 				string selection = TextBoxGetSelection(box);
@@ -152,12 +152,12 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 		if (c) TextBoxAddChars(box, &c, 1);
 	}
 
-	if (box->content.elementCount <= 1) return;
+	if (box->content.size <= 1) return;
 
 	if (RepeatedKeyInput(KEY_BACKSPACE, 0.160, 16)) {
 		if (!TextBoxEraseSelection(box)) TextBoxEraseChars(box, --box->writingCursor, 1);
 	} else if (RepeatedKeyInput(KEY_DELETE, 0.160, 16)) {
-		if (!TextBoxEraseSelection(box) && (box->writingCursor < (int)box->content.elementCount - 1)) {
+		if (!TextBoxEraseSelection(box) && (box->writingCursor < (int)box->content.size - 1)) {
 			TextBoxEraseChars(box, box->writingCursor, 1);
 		}
 	}
@@ -184,12 +184,12 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 		}
 	}
 
-	box->writingCursor = clamp(box->writingCursor, 0, box->content.elementCount - 1);
+	box->writingCursor = clamp(box->writingCursor, 0, box->content.size - 1);
 
 	if (box->writingCursor == box->selectCursor) box->selectCursor = -1;
 }
 
-float TextWidth(char* text, uint n, float textSize) {
+float TextWidth(string text, uint n, float textSize) {
 	if (!text) return 0;
 
 	n = min(n, strlen(text));
@@ -212,7 +212,7 @@ void TextBoxDisplayCursor(TextBox* box) {
 
 	float cursorY = box->body.y + (box->body.height * 0.525);
 
-	float cursorX = box->body.x + TextWidth(box->content.data, box->writingCursor, box->body.height);
+	float cursorX = box->body.x + TextWidth((string)box->content.data, box->writingCursor, box->body.height);
 
 	DrawRectangle(cursorX + cursorThickness / 2, cursorY - cursorSize / 2, cursorThickness, cursorSize, BLACK);
 }
@@ -222,15 +222,15 @@ void TextBoxDisplay(TextBox* box) {
 	DrawRectangleRec(box->body, DARKGRAY);
 	if (box->isFocused) DrawRectangleRec(box->body, Fade(WHITE, 0.2));
 
-	if (!box->content.elementCount) return;
+	if (!box->content.size) return;
 	DrawText((char*)box->content.data, box->body.x, box->body.y, box->body.height, RAYWHITE);
 
 	if (!box->isFocused) return;
 	TextBoxDisplayCursor(box);
 	if (box->selectCursor < 0) return;
 	float cursorThickness = TextWidth("I", 1, box->body.height);
-	float cursorX = box->body.x + TextWidth(box->content.data, box->writingCursor, box->body.height);
-	float selectX = box->body.x + TextWidth(box->content.data, box->selectCursor, box->body.height);
+	float cursorX = box->body.x + TextWidth((string)box->content.data, box->writingCursor, box->body.height);
+	float selectX = box->body.x + TextWidth((string)box->content.data, box->selectCursor, box->body.height);
 	DrawRectangle(min(cursorX, selectX), box->body.y + box->body.height * 0.05,
 				  max(cursorX, selectX) - min(cursorX, selectX), box->body.height * 0.9, Fade(PINK, 0.2));
 }
