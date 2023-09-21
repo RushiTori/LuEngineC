@@ -17,7 +17,7 @@ endif
 # ========= Everything project related =========
 
 
-PROJ    := libLuEngine
+PROJ    := libLuEngineC
 TARGET  := $(PROJ).a
 DTARGET := $(PROJ)_debug.a
 
@@ -35,7 +35,7 @@ else ifeq ($(USED_OS), Linux)
 endif
 
 STATIC_LIB_PATH := $(STATIC_PATH)/lib
-STATIC_H_PATH   := $(STATIC_PATH)/include/LuEngine
+STATIC_H_PATH   := $(STATIC_PATH)/include/LuEngineC
 
 EXT     := c
 COMP    := gcc
