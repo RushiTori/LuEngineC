@@ -1,7 +1,7 @@
 #ifndef ENGINE_UTILS_H
 #define ENGINE_UTILS_H
 
-#include <LuLib/LuUtils.h>
+#include <LuLibC/LuUtils.h>
 #include <rayconfig.h>
 #include <raylib.h>
 #include <raymath.h>

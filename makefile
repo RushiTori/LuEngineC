@@ -16,15 +16,9 @@ endif
 
 # ========= Everything project related =========
 
-
 PROJ    := libLuEngineC
 TARGET  := $(PROJ).a
 DTARGET := $(PROJ)_debug.a
-
-ifeq ($(USED_OS), Windows)
-	TARGET  := $(PROJ).lib
-	DTARGET := $(PROJ)_debug.lib
-endif
 
 STATIC_PATH := errorLib
 
@@ -53,7 +47,12 @@ INC_FILES := $(wildcard $(INC_DIR)/*.h)
 
 # ========== Everything flags related ==========
 
-O_FLAGS := -O3 -I include/ -std=c2x -Wall -Wextra -Werror -Wfatal-errors -pedantic -pedantic-errors -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wredundant-decls -Wshadow -Wstrict-overflow=5 -Wundef -Wno-unused -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option
+O_FLAGS := -O3 -std=c2x -Wall -Wextra -Werror -Wfatal-errors -pedantic -pedantic-errors -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wredundant-decls -Wshadow -Wstrict-overflow=5 -Wundef -Wno-unused -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option
+O_FLAGS += -I include
+
+ifeq ($(USED_OS), Windows)
+	O_FLAGS += -I C:/CustomLibs/include
+endif
 
 # =========== Every usable functions ===========
 
@@ -103,9 +102,11 @@ libHeader:
 	@$(RM) LuEngine.h
 	@touch LuEngine.h
 	@echo "#ifndef LU_ENGINE_H" >> LuEngine.h
-	@echo "#define LU_ENGINE_H\n" >> LuEngine.h
+	@echo "#define LU_ENGINE_H" >> LuEngine.h
+	@echo "" >> LuEngine.h
 	@./createLibHeader.sh
-	@echo "\n#endif  // LU_ENGINE_H" >> LuEngine.h
+	@echo "" >> LuEngine.h
+	@echo "#endif  // LU_ENGINE_H" >> LuEngine.h
 
 build: $(TARGET) 
 	@$(MAKE) --silent libHeader
@@ -169,3 +170,5 @@ showFiles:
 	@echo Install paths
 	@echo "lib path     :" $(STATIC_LIB_PATH)
 	@echo "headers path :" $(STATIC_H_PATH)
+	@echo 
+	@echo "O Flags : " $(O_FLAGS)

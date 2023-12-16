@@ -106,7 +106,7 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 	if (!box->isFocused) return;
 
 	for (int key = GetKeyPressed(); key; key = GetKeyPressed()) {
-		box->writingCursor = clamp(box->writingCursor, 0, box->content.size - 1);
+		box->writingCursor = clamp(box->writingCursor, 0, (int)(box->content.size - 1));
 		if ((key == KEY_HOME) || (key == KEY_PAGE_UP)) {
 			if (IsShiftDown) {
 				if (box->selectCursor < 0) box->selectCursor = box->writingCursor;
@@ -184,7 +184,7 @@ void TextBoxUpdate(TextBox* box, Vector2 mousePos) {
 		}
 	}
 
-	box->writingCursor = clamp(box->writingCursor, 0, box->content.size - 1);
+	box->writingCursor = clamp(box->writingCursor, 0, (int)(box->content.size - 1));
 
 	if (box->writingCursor == box->selectCursor) box->selectCursor = -1;
 }

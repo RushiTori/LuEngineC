@@ -1,7 +1,7 @@
 #ifndef DRAWABLE_TEXT_H
 #define DRAWABLE_TEXT_H
 
-#include <LuLib/LuString.h>
+#include <LuLibC/LuString.h>
 
 #include "EngineUtils.h"
 

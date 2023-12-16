@@ -1,8 +1,8 @@
 #ifndef TEXT_BOX_H
 #define TEXT_BOX_H
 
-#include <LuLib/LuArray.h>
-#include <LuLib/LuString.h>
+#include <LuLibC/LuArray.h>
+#include <LuLibC/LuString.h>
 
 #include "EngineUtils.h"
 
